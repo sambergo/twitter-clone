@@ -32,7 +32,7 @@ const useStyles = makeStyles(() => ({
   teksti: {
     width: "100%",
     marginBlock: 10,
-    color: "white",
+    // color: "white",
   },
 }));
 
@@ -46,6 +46,7 @@ const SignUp: React.FC<SignUpProps> = ({
     <div>
       <Dialog
         className={classes.root}
+        fullScreen={window.innerWidth < 600}
         open={open}
         onClose={handleClose}
         aria-labelledby="form-dialog-title"

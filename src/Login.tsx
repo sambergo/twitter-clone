@@ -13,6 +13,7 @@ import { Twitter } from "@material-ui/icons";
 import { Field, Form, Formik } from "formik";
 import React from "react";
 import { Button1 } from "./Buttons";
+import { useHistory } from "react-router-dom";
 
 interface LoginProps {}
 
@@ -51,6 +52,7 @@ const useStyles = makeStyles((theme: Theme) => ({
 
 const Login: React.FC<LoginProps> = ({}) => {
   const classes = useStyles();
+  const history = useHistory();
   return (
     <Box className={classes.main}>
       <Grid container direction="column">
@@ -65,8 +67,9 @@ const Login: React.FC<LoginProps> = ({}) => {
             initialValues={{ username: "" }}
             onSubmit={(values, actions) => {
               console.log({ values, actions });
-              alert(JSON.stringify(values, null, 2));
+              // alert(JSON.stringify(values, null, 2));
               actions.setSubmitting(false);
+              history.push("/home");
             }}
           >
             <Form>
