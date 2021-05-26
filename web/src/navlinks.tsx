@@ -16,42 +16,42 @@ export const navlinks = [
   },
   {
     icon: <HomeOutlinedIcon fontSize="large" />,
-    text: "Etusivu",
+    text: "Home",
     link: "a",
   },
   {
     icon: <AcUnitOutlinedIcon fontSize="large" />,
-    text: "Selaa",
+    text: "Explore",
     link: "a",
   },
   {
     icon: <NotificationsOutlinedIcon fontSize="large" />,
-    text: "Ilmoitukset",
+    text: "Notifications",
     link: "a",
   },
   {
     icon: <MailOutlinedIcon fontSize="large" />,
-    text: "Viestit",
+    text: "Messages",
     link: "a",
   },
   {
     icon: <BookmarkOutlinedIcon fontSize="large" />,
-    text: "Kirjainmerkit",
+    text: "Bookmarks",
     link: "a",
   },
   {
     icon: <ListOutlinedIcon fontSize="large" />,
-    text: "Listat",
+    text: "Lists",
     link: "a",
   },
   {
     icon: <PersonOutlinedIcon fontSize="large" />,
-    text: "Profiili",
+    text: "Profile",
     link: "a",
   },
   {
     icon: <MoreHorizOutlinedIcon fontSize="large" />,
-    text: "Lisää",
+    text: "More",
     link: "a",
   },
 ];

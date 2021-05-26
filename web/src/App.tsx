@@ -16,12 +16,9 @@ const theme = createMuiTheme({
     fontFamily: "tewi, Source Code Pro, sans",
     button: {
       textTransform: "none",
-      // borderRadius: 30,
       marginTop: 30,
       paddingInline: 140,
-      // paddingBlock: 10,
       background: "#1da1f2",
-      // color: "white",
     },
   },
 });

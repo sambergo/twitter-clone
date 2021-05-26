@@ -94,7 +94,6 @@ const Landing: React.FC<LandingProps> = ({}) => {
           <Box
             margin="auto"
             display="flex"
-            // alignItems="center"
             justifyContent="center"
             height="100%"
           >
