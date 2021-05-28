@@ -1,4 +1,7 @@
 {
+    "scripts": {
+        "dev": "nodemon app.ts"
+    },
   "name": "server",
   "version": "1.0.0",
   "description": "twitter clone backend",

@@ -15,7 +15,7 @@ import { COOKIE_NAME } from "../constants";
 import { User } from "../entities/User";
 import { MyContext } from "../types";
 import { validateRegister } from "../utils/validateRegister";
-import { UsernamePasswordInput } from "./UsernamePasswordInput";
+import { UsernamePasswordInput } from "../entities/UsernamePasswordInput";
 
 @ObjectType()
 class FieldError {
@@ -67,6 +67,7 @@ export class UserResolver {
         .into(User)
         .values({
           username: input.username,
+          fullname: input.fullname,
           email: input.email,
           password: hashedPassword,
         })
