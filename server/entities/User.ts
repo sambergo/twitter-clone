@@ -1,12 +1,12 @@
-import { ObjectType, Field } from "type-graphql";
+import { Field, ObjectType } from "type-graphql";
 import {
-  Entity,
-  PrimaryGeneratedColumn,
-  CreateDateColumn,
-  UpdateDateColumn,
-  Column,
   BaseEntity,
+  Column,
+  CreateDateColumn,
+  Entity,
   OneToMany,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
 } from "typeorm";
 import { Like } from "./Like";
 import { Tweet } from "./Tweet";
@@ -33,13 +33,7 @@ export class User extends BaseEntity {
   @Column()
   password!: string;
 
-  // @Field()
-  // @Column({ default: [] })
-  // following: User[];
-
-  // @OneToMany(() => User, (user) => user.following)
-  // follower: User[]
-
+  @Field(() => [Tweet])
   @OneToMany(() => Tweet, (tweet) => tweet.creator)
   tweets: Tweet[];
 

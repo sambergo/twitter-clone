@@ -1,4 +1,4 @@
-import { ObjectType, Field, Int } from "type-graphql";
+import { Field, Int, ObjectType, Root } from "type-graphql";
 import {
   BaseEntity,
   Column,
@@ -10,7 +10,7 @@ import {
   UpdateDateColumn,
 } from "typeorm";
 import { Like } from "./Like";
-// import { Comment } from "./Comment";
+import { TweetComment } from "./TweetComment";
 import { User } from "./User";
 
 @ObjectType()
@@ -24,13 +24,6 @@ export class Tweet extends BaseEntity {
   @Column()
   tweet!: string;
 
-  @Field(() => Int, { nullable: true })
-  voteStatus: number | null;
-
-  @Field()
-  @Column({ type: "int", default: 0 })
-  points!: number;
-
   @Field()
   @Column()
   creatorId: number;
@@ -39,8 +32,18 @@ export class Tweet extends BaseEntity {
   @ManyToOne(() => User, (user) => user.tweets)
   creator: User;
 
+  @Field(() => [Like])
   @OneToMany(() => Like, (like) => like.tweet)
-  likes: Like[];
+  likedBy: Like[];
+
+  @Field(() => [TweetComment])
+  @OneToMany(() => TweetComment, (comment) => comment.targetTweet)
+  comments: TweetComment[];
+
+  @Field(() => Int)
+  likes(@Root() parent: Tweet): number {
+    return parent.likedBy?.length || 0;
+  }
 
   @Field(() => String)
   @CreateDateColumn()

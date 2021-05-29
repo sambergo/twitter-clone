@@ -55,11 +55,13 @@ const main = async () => {
     })
   );
 
-  const server = new ApolloServer({
-    schema: await buildSchema({
+  const schema = await buildSchema({
       resolvers: [UserResolver, TweetResolver],
       validate: false,
-    }),
+    })
+
+  const server = new ApolloServer({
+      schema,
     context: ({ req, res }): MyContext => ({ req, res, redis }),
   });
   server.applyMiddleware({ app });

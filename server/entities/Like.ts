@@ -1,23 +1,23 @@
-import { BaseEntity, Column, Entity, ManyToOne, PrimaryColumn } from "typeorm";
+import { Field, ObjectType } from "type-graphql";
+import { BaseEntity, Entity, ManyToOne, PrimaryColumn } from "typeorm";
 import { Tweet } from "./Tweet";
 import { User } from "./User";
 
+@ObjectType()
 @Entity()
 export class Like extends BaseEntity {
-  @Column({ type: "int" })
-  value: number;
-
+  @Field()
   @PrimaryColumn()
   userId: number;
 
+  @Field()
+  @PrimaryColumn()
+  tweetId: number;
+
+  @Field(() => User)
   @ManyToOne(() => User, (user) => user.likes)
   user: User;
 
-  @PrimaryColumn()
-  postId: number;
-
-  @ManyToOne(() => Tweet, (tweet) => tweet.likes, {
-    onDelete: "CASCADE",
-  })
+  @ManyToOne(() => Tweet, (tweet) => tweet.likedBy)
   tweet: Tweet;
 }
