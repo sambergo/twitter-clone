@@ -10,7 +10,6 @@ import {
   UpdateDateColumn,
 } from "typeorm";
 import { Like } from "./Like";
-import { TweetComment } from "./TweetComment";
 import { User } from "./User";
 
 @ObjectType()
@@ -26,19 +25,31 @@ export class Tweet extends BaseEntity {
 
   @Field()
   @Column()
-  creatorId: number;
+  creatorId!: number;
 
   @Field()
   @ManyToOne(() => User, (user) => user.tweets)
-  creator: User;
+  creator!: User;
 
   @Field(() => [Like])
   @OneToMany(() => Like, (like) => like.tweet)
   likedBy: Like[];
 
-  @Field(() => [TweetComment])
-  @OneToMany(() => TweetComment, (comment) => comment.targetTweet)
-  comments: TweetComment[];
+  @Field()
+  @Column({ default: false })
+  isComment!: boolean;
+
+  @Field({ nullable: true })
+  @Column({ nullable: true })
+  targetId: number;
+
+  @Field(() => Tweet, { nullable: true })
+  @ManyToOne(() => Tweet, (tweet) => tweet.comments)
+  targetTweet: Tweet;
+
+  @Field(() => [Tweet], { nullable: true })
+  @OneToMany(() => Tweet, (tweet) => tweet.targetTweet)
+  comments: Tweet[];
 
   @Field(() => Int)
   likes(@Root() parent: Tweet): number {

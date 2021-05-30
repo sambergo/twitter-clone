@@ -11,7 +11,6 @@ import {
   UseMiddleware,
 } from "type-graphql";
 import { getConnection } from "typeorm";
-import { Like } from "../entities/Like";
 import { Tweet } from "../entities/Tweet";
 import { isAuth } from "../middleware/isAuth";
 import { MyContext } from "../types";
@@ -20,6 +19,14 @@ import { MyContext } from "../types";
 class TweetInput {
   @Field()
   tweet: string;
+}
+
+@ObjectType()
+class TweetWithComments {
+  @Field(() => Tweet, { nullable: true })
+  tweet: Tweet;
+  @Field(() => [Tweet], { nullable: true })
+  comments: Tweet[];
 }
 
 @ObjectType()
@@ -32,6 +39,25 @@ class InfiniteTweets {
 
 @Resolver(Tweet)
 export class TweetResolver {
+  @Query(() => TweetWithComments)
+  @UseMiddleware(isAuth)
+  async tweetWithComments(
+    @Arg("id", () => Int) id: number
+  ): Promise<TweetWithComments | null> {
+    const tweet = await getConnection().manager.findOne(Tweet, {
+      relations: ["creator", "likedBy"],
+      where: { id },
+    });
+    const comments = await getConnection().manager.find(Tweet, {
+      where: { targetId: id },
+    });
+    if (!tweet) return null;
+    return {
+      tweet,
+      comments,
+    };
+  }
+
   @Query(() => InfiniteTweets)
   @UseMiddleware(isAuth)
   async allTweets(): // @Arg("cursor", () => String, { nullable: true }) cursor: string | null,
@@ -39,24 +65,12 @@ export class TweetResolver {
   Promise<InfiniteTweets> {
     const tweets = await getConnection().manager.find(Tweet, {
       relations: ["creator", "likedBy"],
+      where: { isComment: false },
     });
     return {
       hasMore: true,
       tweets,
     };
-  }
-
-  @Mutation(() => Boolean)
-  @UseMiddleware(isAuth)
-  async like(
-    @Arg("tweetId", () => Int) tweetId: number,
-    @Ctx() { req }: MyContext
-  ): Promise<boolean> {
-    await Like.insert({
-      userId: req.session.userId,
-      tweetId,
-    });
-    return true;
   }
 
   @Mutation(() => Boolean)
@@ -85,6 +99,21 @@ export class TweetResolver {
       tweet.save();
     }
     return tweet ?? null;
+  }
+
+  @Mutation(() => Tweet)
+  @UseMiddleware(isAuth)
+  async comment(
+    @Arg("input") input: TweetInput,
+    @Arg("targetId", () => Int) targetId: number,
+    @Ctx() { req }: MyContext
+  ): Promise<Tweet> {
+    return await Tweet.create({
+      ...input,
+      creatorId: req.session.userId,
+      isComment: true,
+      targetId,
+    }).save();
   }
 
   @Mutation(() => Tweet)

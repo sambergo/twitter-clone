@@ -10,6 +10,7 @@ import { COOKIE_NAME, __prod__ } from "./constants";
 import { Like } from "./entities/Like";
 import { Tweet } from "./entities/Tweet";
 import { User } from "./entities/User";
+import { LikeResolver } from "./resolvers/like";
 import { TweetResolver } from "./resolvers/tweet";
 import { UserResolver } from "./resolvers/user";
 import { MyContext } from "./types";
@@ -56,12 +57,12 @@ const main = async () => {
   );
 
   const schema = await buildSchema({
-      resolvers: [UserResolver, TweetResolver],
-      validate: false,
-    })
+    resolvers: [UserResolver, TweetResolver, LikeResolver],
+    validate: false,
+  });
 
   const server = new ApolloServer({
-      schema,
+    schema,
     context: ({ req, res }): MyContext => ({ req, res, redis }),
   });
   server.applyMiddleware({ app });
