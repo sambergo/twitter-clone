@@ -39,12 +39,6 @@ class InfiniteTweets {
 
 @Resolver(Tweet)
 export class TweetResolver {
-  // @FieldResolver(() => Boolean)
-  // likedByUser(Root() tweet: Tweet, @Ctx() {}: MyC ) {
-  //   return true
-  // }
-  //   // creator(@Root() post: Post, @Ctx() { userLoader }: MyContext) {
-
   @Query(() => TweetWithComments)
   @UseMiddleware(isAuth)
   async tweetWithComments(
@@ -73,6 +67,7 @@ export class TweetResolver {
       // TODO KOMMENTIT EI TOIMI
       relations: ["creator", "likedBy", "comments"],
       where: { isComment: false },
+      order: { createdAt: -1 },
     });
     return {
       hasMore: true,

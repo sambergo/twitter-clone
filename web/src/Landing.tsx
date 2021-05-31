@@ -1,10 +1,11 @@
 import { Box, Grid, Link, makeStyles, Typography } from "@material-ui/core";
 import TwitterIcon from "@material-ui/icons/Twitter";
 import React from "react";
+import { useHistory } from "react-router";
 import { Button1, Button2 } from "./Buttons";
+import { useMeQuery } from "./generated/graphql";
 import SignUp from "./SignUp";
 
-interface LandingProps {}
 const useStyles = makeStyles(() => ({
   boxStyles: {
     backgroundImage: `url("img/twitter_left.png")`,
@@ -40,8 +41,11 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-const Landing: React.FC<LandingProps> = ({}) => {
+const Landing: React.FC = () => {
   const [signUpOpen, setsignupopen] = React.useState(false);
+  const history = useHistory();
+  const { data } = useMeQuery();
+  if (data?.me?.id) history.push("/home");
 
   const handleClickOpen = () => {
     setsignupopen(true);

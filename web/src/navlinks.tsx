@@ -12,17 +12,17 @@ export const navlinks = [
   {
     icon: <TwitterIcon fontSize="large" />,
     text: "",
-    link: "a",
+    link: "/",
   },
   {
     icon: <HomeOutlinedIcon fontSize="large" />,
     text: "Home",
-    link: "a",
+    link: "/home",
   },
   {
     icon: <AcUnitOutlinedIcon fontSize="large" />,
     text: "Explore",
-    link: "a",
+    link: "/explore",
   },
   {
     icon: <NotificationsOutlinedIcon fontSize="large" />,

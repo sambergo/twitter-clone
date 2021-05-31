@@ -15,8 +15,6 @@ import { Button1 } from "./Buttons";
 import { useLoginMutation } from "./generated/graphql";
 import { toErrorMap } from "./utils/toErrorMap";
 
-interface LoginProps {}
-
 const useStyles = makeStyles((theme: Theme) => ({
   logo: {
     marginTop: 20,
@@ -50,7 +48,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
 }));
 
-const Login: React.FC<LoginProps> = ({}) => {
+const Login: React.FC = () => {
   const classes = useStyles();
   const history = useHistory();
   const [login] = useLoginMutation();

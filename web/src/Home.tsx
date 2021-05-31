@@ -5,21 +5,20 @@ import {
   Container,
   FilledInput,
   Grid,
-  Input,
   InputAdornment,
   Link,
   makeStyles,
+  TextField,
   Typography,
 } from "@material-ui/core";
 import FlareIcon from "@material-ui/icons/Flare";
 import SearchIcon from "@material-ui/icons/Search";
+import { Field, Form, Formik } from "formik";
 import React from "react";
-import { useFeedQuery } from "./generated/graphql";
+import { useCreateTweetMutation, useFeedQuery } from "./generated/graphql";
 // import tweets from "./MOCK_DATA.json";
 import { navlinks } from "./navlinks";
 import Tweet from "./Tweet";
-
-interface HomeProps {}
 
 const useStyles = makeStyles(() => ({
   tweetinput: {
@@ -40,12 +39,10 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-const Home: React.FC<HomeProps> = ({}) => {
+const Home: React.FC = () => {
   const classes = useStyles();
-  // const { data } = useMeQuery();
-  const { data, loading } = useFeedQuery();
-  console.log("data : ", loading, data);
-
+  const { data } = useFeedQuery();
+  const [createTweet] = useCreateTweetMutation();
   const navLink = (obj: { icon: JSX.Element; text: string; link: string }) => {
     const { icon, text, link } = obj;
     return (
@@ -68,31 +65,35 @@ const Home: React.FC<HomeProps> = ({}) => {
     );
   };
 
-  const Main = () => {
+  const Top = () => (
+    <Box
+      position="sticky"
+      top={0}
+      zIndex={1100}
+      bgcolor="black"
+      display="flex"
+      justifyContent="space-between"
+      width="100%"
+      paddingX={2}
+      paddingY={2}
+      borderRight={1}
+      borderLeft={1}
+      borderBottom={1}
+      borderColor="gray"
+    >
+      <Box>
+        <Typography variant="h6">Home</Typography>
+      </Box>
+      <Box>
+        <FlareIcon color="primary" />
+      </Box>
+    </Box>
+  );
+
+  const Feed = () => {
     return (
       <Grid md={8} lg={6} xs={10} item container direction="column">
-        <Box
-          position="sticky"
-          top={0}
-          zIndex={1100}
-          bgcolor="black"
-          display="flex"
-          justifyContent="space-between"
-          width="100%"
-          paddingX={2}
-          paddingY={2}
-          borderRight={1}
-          borderLeft={1}
-          borderBottom={1}
-          borderColor="gray"
-        >
-          <Box>
-            <Typography variant="h6">Home</Typography>
-          </Box>
-          <Box>
-            <FlareIcon color="primary" />
-          </Box>
-        </Box>
+        <Top />
         <Box borderRight={1} borderLeft={1} borderColor="gray">
           <Grid
             alignContent="space-between"
@@ -110,14 +111,48 @@ const Home: React.FC<HomeProps> = ({}) => {
               <Grid xs={10} item>
                 <Box paddingX={2}>
                   <Box>
-                    <Input
-                      disableUnderline
-                      placeholder="What's happening?"
-                      className={classes.tweetinput}
-                    />
-                  </Box>
-                  <Box display="flex" justifyContent="flex-end">
-                    <Button>Tweet</Button>
+                    <Formik
+                      initialValues={{ tweet: "" }}
+                      onSubmit={async (values, actions) => {
+                        console.log({ values, actions });
+                        const res = await createTweet({
+                          variables: {
+                            input: {
+                              ...values,
+                            },
+                          },
+                        });
+                      }}
+                    >
+                      <Form>
+                        <Field
+                          name="tweet"
+                          as={TextField}
+                          multiline
+                          className={classes.tweetinput}
+                          id="tweet"
+                          placeholder="Whats happening?"
+                          disableUnderline
+                          variant="outlined"
+                          color="primary"
+                        />
+                        <Box display="flex" justifyContent="flex-end">
+                          <Button
+                            style={{
+                              marginTop: 30,
+                              background: "#1da1f2",
+                              borderRadius: 30,
+                              color: "white",
+                              paddingInline: 20,
+                              paddingBlock: 8,
+                            }}
+                            type="submit"
+                          >
+                            Tweet
+                          </Button>
+                        </Box>
+                      </Form>
+                    </Formik>
                   </Box>
                 </Box>
               </Grid>
@@ -199,7 +234,7 @@ const Home: React.FC<HomeProps> = ({}) => {
     <Container>
       <Grid container direction="row">
         <Left />
-        <Main />
+        <Feed />
         <Right />
       </Grid>
     </Container>
