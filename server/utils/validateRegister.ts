@@ -1,6 +1,6 @@
-import { UsernamePasswordInput } from "../entities/UsernamePasswordInput";
+import { RegisterInput } from "types";
 
-export const validateRegister = (options: UsernamePasswordInput) => {
+export const validateRegister = (options: RegisterInput) => {
   if (!options.email.includes("@")) {
     return [
       {

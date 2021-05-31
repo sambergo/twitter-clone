@@ -39,6 +39,12 @@ class InfiniteTweets {
 
 @Resolver(Tweet)
 export class TweetResolver {
+  // @FieldResolver(() => Boolean)
+  // likedByUser(Root() tweet: Tweet, @Ctx() {}: MyC ) {
+  //   return true
+  // }
+  //   // creator(@Root() post: Post, @Ctx() { userLoader }: MyContext) {
+
   @Query(() => TweetWithComments)
   @UseMiddleware(isAuth)
   async tweetWithComments(
@@ -60,11 +66,12 @@ export class TweetResolver {
 
   @Query(() => InfiniteTweets)
   @UseMiddleware(isAuth)
-  async allTweets(): // @Arg("cursor", () => String, { nullable: true }) cursor: string | null,
+  async feed(): // @Arg("cursor", () => String, { nullable: true }) cursor: string | null,
   // @Ctx() { req }: MyContext
   Promise<InfiniteTweets> {
     const tweets = await getConnection().manager.find(Tweet, {
-      relations: ["creator", "likedBy"],
+      // TODO KOMMENTIT EI TOIMI
+      relations: ["creator", "likedBy", "comments"],
       where: { isComment: false },
     });
     return {

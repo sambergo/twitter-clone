@@ -1,33 +1,41 @@
-import { Avatar, Box, Divider, Grid, Typography } from "@material-ui/core";
-import React from "react";
+import { Avatar, Box, Grid, Typography } from "@material-ui/core";
 import ChatBubbleOutlineOutlinedIcon from "@material-ui/icons/ChatBubbleOutlineOutlined";
-import RepeatOutlinedIcon from "@material-ui/icons/RepeatOutlined";
 import FavoriteBorderOutlinedIcon from "@material-ui/icons/FavoriteBorderOutlined";
 import PublishOutlinedIcon from "@material-ui/icons/PublishOutlined";
+import RepeatOutlinedIcon from "@material-ui/icons/RepeatOutlined";
+import { unlink } from "fs";
+import React from "react";
+import { useLikeMutation, useUnLikeMutation } from "./generated/graphql";
 
 interface TweetProps {
   avatar: string;
   fullname: string;
   username: string;
-  time: string;
+  createdAt: string;
+  id: number;
   tweet: string;
-  likes: number;
-  comments: number;
+  likedByUser: boolean;
+  likesCount: number;
+  commentsCount: number;
   retweets: number;
 }
 
 const Tweet: React.FC<TweetProps> = ({
   avatar,
   fullname,
+  id: tweetId,
   username,
-  time,
+  createdAt,
+  likedByUser,
   tweet,
-  likes,
-  comments,
+  likesCount,
+  commentsCount,
   retweets,
 }) => {
+  const [like] = useLikeMutation();
+  const [unlike] = useUnLikeMutation();
   return (
-    <Box border={1} borderColor="gray" padding={3}>
+    <Box width="100%" border={1} borderColor="gray" padding={3}>
       <Grid item container>
         <Grid item xs={1}>
           <Avatar src={avatar} alt="avatar" />
@@ -50,7 +58,7 @@ const Tweet: React.FC<TweetProps> = ({
               <Box display="flex">
                 <ChatBubbleOutlineOutlinedIcon />
                 <Typography style={{ marginLeft: "10px" }} variant="body2">
-                  {comments}{" "}
+                  {commentsCount}{" "}
                 </Typography>
               </Box>
             </Grid>
@@ -64,9 +72,21 @@ const Tweet: React.FC<TweetProps> = ({
             </Grid>
             <Grid item>
               <Box display="flex">
-                <FavoriteBorderOutlinedIcon />
+                <Box
+                  onClick={async () => {
+                    {
+                      likedByUser
+                        ? await unlike({ variables: { tweetId } })
+                        : await like({ variables: { tweetId } });
+                    }
+                  }}
+                >
+                  <FavoriteBorderOutlinedIcon
+                  // color={likedByUser ? "primary" : "secondary"}
+                  />
+                </Box>
                 <Typography style={{ marginLeft: "10px" }} variant="body2">
-                  {likes}{" "}
+                  {likesCount}{" "}
                 </Typography>
               </Box>
             </Grid>

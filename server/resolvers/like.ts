@@ -11,6 +11,7 @@ export class LikeResolver {
     @Arg("tweetId", () => Int) tweetId: number,
     @Ctx() { req }: MyContext
   ): Promise<boolean> {
+    console.log("LIKE", tweetId);
     await Like.insert({
       userId: req.session.userId,
       tweetId,

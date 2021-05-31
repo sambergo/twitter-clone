@@ -12,6 +12,8 @@ import {
 import TwitterIcon from "@material-ui/icons/Twitter";
 import { Field, Form, Formik } from "formik";
 import React from "react";
+import { useHistory } from "react-router-dom";
+import { useSignUpMutation } from "./generated/graphql";
 
 interface SignUpProps {
   open: boolean;
@@ -41,7 +43,9 @@ const SignUp: React.FC<SignUpProps> = ({
   handleClose,
   handleClickOpen,
 }) => {
+  const [register] = useSignUpMutation();
   const classes = useStyles();
+  const history = useHistory();
   return (
     <div>
       <Dialog
@@ -69,31 +73,60 @@ const SignUp: React.FC<SignUpProps> = ({
         </Grid>
         <DialogTitle id="form-dialog-title">Create your account</DialogTitle>
         <DialogContent>
-          {/* <DialogContentText>
-            To subscribe to this website, please enter your email address here.
-            We will send updates occasionally.
-          </DialogContentText> */}
-
           <Formik
-            initialValues={{ name: "", email: "", dateOfBirth: "" }}
-            onSubmit={(values, actions) => {
+            initialValues={{
+              password: "",
+              fullname: "",
+              username: "",
+              email: "",
+              dateOfBirth: "",
+            }}
+            onSubmit={async (values, actions) => {
               console.log({ values, actions });
-              alert(JSON.stringify(values, null, 2));
-              actions.setSubmitting(false);
+              const res = await register({
+                variables: {
+                  input: {
+                    ...values,
+                  },
+                },
+              });
+              //TODO ERROR FIELDIT
+              console.log("res : ", res);
+              history.push("/login");
             }}
           >
             <Form>
               <Field
-                name="name"
+                name="username"
                 as={TextField}
                 className={classes.teksti}
-                id="name"
-                label="Name"
+                id="username"
+                label="Username"
+                variant="outlined"
+                color="primary"
+              />
+              <Field
+                name="fullname"
+                as={TextField}
+                className={classes.teksti}
+                id="fullname"
+                label="Fullname"
+                variant="outlined"
+                color="primary"
+              />
+              <Field
+                name="password"
+                type="password"
+                as={TextField}
+                className={classes.teksti}
+                id="password"
+                label="Password"
                 variant="outlined"
                 color="primary"
               />
               <Field
                 name="email"
+                type="email"
                 as={TextField}
                 className={classes.teksti}
                 id="email"
@@ -120,7 +153,7 @@ const SignUp: React.FC<SignUpProps> = ({
                 variant="outlined"
                 className={classes.teksti}
               />
-              {/* <Button type="submit">Sign up</Button> */}
+              <Button type="submit">Sign up</Button>
             </Form>
           </Formik>
           <Box style={{ height: "150px" }}></Box>

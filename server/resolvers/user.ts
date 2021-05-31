@@ -13,9 +13,8 @@ import {
 import { getConnection } from "typeorm";
 import { COOKIE_NAME } from "../constants";
 import { User } from "../entities/User";
-import { MyContext } from "../types";
+import { LoginInput, MyContext, RegisterInput } from "../types";
 import { validateRegister } from "../utils/validateRegister";
-import { UsernamePasswordInput } from "../entities/UsernamePasswordInput";
 
 @ObjectType()
 class FieldError {
@@ -43,6 +42,7 @@ export class UserResolver {
 
   @Query(() => User, { nullable: true })
   me(@Ctx() { req }: MyContext) {
+    console.log("req : ", req.session);
     if (!req.session.userId) {
       return null;
     }
@@ -51,13 +51,14 @@ export class UserResolver {
 
   @Mutation(() => UserResponse)
   async register(
-    @Arg("input") input: UsernamePasswordInput,
+    @Arg("input") input: RegisterInput,
     @Ctx() { req }: MyContext
   ): Promise<UserResponse> {
     const errors = validateRegister(input);
     if (errors) {
       return { errors };
     }
+    const { username, fullname, email, dateOfBirth } = input;
     const hashedPassword = await argon2.hash(input.password);
     let user;
     try {
@@ -66,9 +67,10 @@ export class UserResolver {
         .insert()
         .into(User)
         .values({
-          username: input.username,
-          fullname: input.fullname,
-          email: input.email,
+          username,
+          fullname,
+          email,
+          dateOfBirth,
           password: hashedPassword,
         })
         .returning("*")
@@ -92,10 +94,10 @@ export class UserResolver {
 
   @Mutation(() => UserResponse)
   async login(
-    @Arg("usernameOrEmail") usernameOrEmail: string,
-    @Arg("password") password: string,
+    @Arg("input") input: LoginInput,
     @Ctx() { req }: MyContext
   ): Promise<UserResponse> {
+    const { usernameOrEmail, password } = input;
     const user = await User.findOne(
       usernameOrEmail.includes("@")
         ? { where: { email: usernameOrEmail } }

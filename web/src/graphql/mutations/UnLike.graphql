@@ -1,0 +1,3 @@
+mutation UnLike($tweetId: Int!) {
+  unlike(tweetId: $tweetId)
+}

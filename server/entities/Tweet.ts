@@ -1,4 +1,4 @@
-import { Field, Int, ObjectType, Root } from "type-graphql";
+import { Ctx, Field, Int, ObjectType, Root } from "type-graphql";
 import {
   BaseEntity,
   Column,
@@ -9,6 +9,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from "typeorm";
+import { MyContext } from "types";
 import { Like } from "./Like";
 import { User } from "./User";
 
@@ -51,8 +52,21 @@ export class Tweet extends BaseEntity {
   @OneToMany(() => Tweet, (tweet) => tweet.targetTweet)
   comments: Tweet[];
 
+  // TODO: fiskumpi tapa?
+  @Field(() => Boolean)
+  likedByUser(@Root() parent: Tweet, @Ctx() { req }: MyContext): boolean {
+    return parent.likedBy
+      .map((l) => l.userId)
+      .includes(req.session.userId ?? -1);
+  }
+
   @Field(() => Int)
-  likes(@Root() parent: Tweet): number {
+  commentsCount(@Root() parent: Tweet): number {
+    return parent.comments?.length || 0;
+  }
+
+  @Field(() => Int)
+  likesCount(@Root() parent: Tweet): number {
     return parent.likedBy?.length || 0;
   }
 

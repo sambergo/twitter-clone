@@ -1,4 +1,5 @@
 import { ApolloServer } from "apollo-server-express";
+import "reflect-metadata";
 import connectRedis from "connect-redis";
 import cors from "cors";
 import express from "express";
@@ -15,6 +16,8 @@ import { TweetResolver } from "./resolvers/tweet";
 import { UserResolver } from "./resolvers/user";
 import { MyContext } from "./types";
 
+const CORS_ORIGIN = "http://localhost:3000";
+
 const main = async () => {
   await createConnection({
     type: "postgres",
@@ -30,9 +33,10 @@ const main = async () => {
   const RedisStore = connectRedis(session);
   const redis = new Redis();
 
+  app.set("trust proxy", 1);
   app.use(
     cors({
-      origin: "http://localhost:3000",
+      origin: CORS_ORIGIN,
       credentials: true,
     })
   );
@@ -48,7 +52,7 @@ const main = async () => {
         maxAge: 1000 * 60 * 60 * 24 * 7, // 1 WEEK
         httpOnly: true,
         sameSite: "lax",
-        secure: __prod__, // cookie only works in https
+        secure: false,
       },
       saveUninitialized: false,
       secret: "salainen",
@@ -65,7 +69,7 @@ const main = async () => {
     schema,
     context: ({ req, res }): MyContext => ({ req, res, redis }),
   });
-  server.applyMiddleware({ app });
+  server.applyMiddleware({ app, cors: false });
 
   // TODO PORT
   app.listen({ port: 4000 }, () =>

@@ -1,7 +1,5 @@
 import {
   Box,
-  Button,
-  Container,
   Grid,
   Link,
   makeStyles,
@@ -12,8 +10,10 @@ import {
 import { Twitter } from "@material-ui/icons";
 import { Field, Form, Formik } from "formik";
 import React from "react";
-import { Button1 } from "./Buttons";
 import { useHistory } from "react-router-dom";
+import { Button1 } from "./Buttons";
+import { useLoginMutation } from "./generated/graphql";
+import { toErrorMap } from "./utils/toErrorMap";
 
 interface LoginProps {}
 
@@ -53,6 +53,7 @@ const useStyles = makeStyles((theme: Theme) => ({
 const Login: React.FC<LoginProps> = ({}) => {
   const classes = useStyles();
   const history = useHistory();
+  const [login] = useLoginMutation();
   return (
     <Box className={classes.main}>
       <Grid container direction="column">
@@ -64,26 +65,34 @@ const Login: React.FC<LoginProps> = ({}) => {
         </Grid>
         <Grid item>
           <Formik
-            initialValues={{ username: "" }}
-            onSubmit={(values, actions) => {
+            initialValues={{ usernameOrEmail: "", password: "" }}
+            onSubmit={async (values, actions) => {
               console.log({ values, actions });
-              // alert(JSON.stringify(values, null, 2));
-              actions.setSubmitting(false);
-              history.push("/home");
+              const res = await login({
+                variables: {
+                  input: {
+                    ...values,
+                  },
+                },
+              });
+              if (res.data?.login.errors) {
+                actions.setErrors(toErrorMap(res.data?.login.errors));
+              } else history.push("/home");
             }}
           >
             <Form>
               <Field
-                name="username"
+                name="usernameOrEmail"
                 as={TextField}
                 className={classes.teksti}
-                id="username"
+                id="usernameOrEmail"
                 label="Phone, email, or username"
                 variant="outlined"
                 color="primary"
               />
               <Field
                 name="password"
+                type="password"
                 as={TextField}
                 className={classes.teksti}
                 id="password"

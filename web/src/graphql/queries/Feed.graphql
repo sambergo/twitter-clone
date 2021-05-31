@@ -1,0 +1,19 @@
+query Feed {
+  feed {
+    tweets {
+      id
+      tweet
+      likesCount
+      commentsCount
+      creatorId
+      createdAt
+      likedByUser
+      isComment
+      creator {
+        username
+        fullname
+      }
+    }
+    hasMore
+  }
+}

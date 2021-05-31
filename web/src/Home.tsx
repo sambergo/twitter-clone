@@ -1,7 +1,5 @@
 import {
   Avatar,
-  BottomNavigation,
-  BottomNavigationAction,
   Box,
   Button,
   Container,
@@ -16,7 +14,8 @@ import {
 import FlareIcon from "@material-ui/icons/Flare";
 import SearchIcon from "@material-ui/icons/Search";
 import React from "react";
-import tweets from "./MOCK_DATA.json";
+import { useFeedQuery } from "./generated/graphql";
+// import tweets from "./MOCK_DATA.json";
 import { navlinks } from "./navlinks";
 import Tweet from "./Tweet";
 
@@ -43,11 +42,14 @@ const useStyles = makeStyles(() => ({
 
 const Home: React.FC<HomeProps> = ({}) => {
   const classes = useStyles();
+  // const { data } = useMeQuery();
+  const { data, loading } = useFeedQuery();
+  console.log("data : ", loading, data);
 
   const navLink = (obj: { icon: JSX.Element; text: string; link: string }) => {
     const { icon, text, link } = obj;
     return (
-      <Link underline="none" href={link} color="inherit">
+      <Link key={text} underline="none" href={link} color="inherit">
         <Box
           margin={1}
           display="flex"
@@ -122,8 +124,14 @@ const Home: React.FC<HomeProps> = ({}) => {
             </Grid>
           </Box>
           <Grid item container>
-            {tweets.map((tweet) => (
-              <Tweet {...tweet} />
+            {data?.feed.tweets.map((tweet) => (
+              <Tweet
+                key={tweet.id}
+                retweets={3}
+                {...tweet}
+                avatar={"/img/avatar.png"}
+                {...tweet.creator}
+              />
             ))}
           </Grid>
         </Box>
@@ -176,10 +184,10 @@ const Home: React.FC<HomeProps> = ({}) => {
           <Avatar alt="avatar" src="/img/avatar.png" />
           <Box display={{ xs: "none", lg: "block" }} marginLeft={1}>
             <Typography style={{ fontSize: "15px" }}>
-              {tweets[0].fullname}{" "}
+              {data?.feed.tweets[0].creator.fullname}{" "}
             </Typography>
             <Typography style={{ fontSize: "10px" }}>
-              @{tweets[0].username}{" "}
+              @{data?.feed.tweets[0].creator.username}{" "}
             </Typography>
           </Box>
         </Box>
