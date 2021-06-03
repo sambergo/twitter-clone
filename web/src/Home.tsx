@@ -88,7 +88,7 @@ const Home: React.FC<HomeProps> = ({ me }) => {
       paddingX={2}
       paddingY={2}
       borderRight={1}
-      borderLeft={1}
+      borderLeft={2}
       borderBottom={1}
       borderColor="gray"
     >
@@ -105,7 +105,12 @@ const Home: React.FC<HomeProps> = ({ me }) => {
     return (
       <Grid md={8} lg={6} xs={10} item container direction="column">
         <Top />
-        <Box borderRight={1} borderLeft={1} borderColor="gray">
+        <Box
+          borderRight={1}
+          borderLeft={2}
+          minHeight="100vh"
+          borderColor="gray"
+        >
           <Grid
             alignContent="space-between"
             item
