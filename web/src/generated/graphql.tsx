@@ -97,11 +97,17 @@ export type Query = {
   __typename?: 'Query';
   tweetWithComments: TweetWithComments;
   feed: InfiniteTweets;
+  profile?: Maybe<User>;
   me?: Maybe<User>;
 };
 
 
 export type QueryTweetWithCommentsArgs = {
+  id: Scalars['Int'];
+};
+
+
+export type QueryProfileArgs = {
   id: Scalars['Int'];
 };
 
@@ -257,6 +263,23 @@ export type MeQuery = (
   & { me?: Maybe<(
     { __typename?: 'User' }
     & Pick<User, 'id' | 'username' | 'fullname'>
+  )> }
+);
+
+export type ProfileQueryVariables = Exact<{
+  id: Scalars['Int'];
+}>;
+
+
+export type ProfileQuery = (
+  { __typename?: 'Query' }
+  & { profile?: Maybe<(
+    { __typename?: 'User' }
+    & Pick<User, 'id' | 'username' | 'fullname' | 'dateOfBirth' | 'createdAt'>
+    & { tweets: Array<(
+      { __typename?: 'Tweet' }
+      & Pick<Tweet, 'id' | 'tweet' | 'likesCount' | 'commentsCount' | 'createdAt'>
+    )> }
   )> }
 );
 
@@ -527,3 +550,49 @@ export function useMeLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<MeQuery
 export type MeQueryHookResult = ReturnType<typeof useMeQuery>;
 export type MeLazyQueryHookResult = ReturnType<typeof useMeLazyQuery>;
 export type MeQueryResult = Apollo.QueryResult<MeQuery, MeQueryVariables>;
+export const ProfileDocument = gql`
+    query Profile($id: Int!) {
+  profile(id: $id) {
+    id
+    username
+    fullname
+    dateOfBirth
+    createdAt
+    tweets {
+      id
+      tweet
+      likesCount
+      commentsCount
+      createdAt
+    }
+  }
+}
+    `;
+
+/**
+ * __useProfileQuery__
+ *
+ * To run a query within a React component, call `useProfileQuery` and pass it any options that fit your needs.
+ * When your component renders, `useProfileQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useProfileQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useProfileQuery(baseOptions: Apollo.QueryHookOptions<ProfileQuery, ProfileQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<ProfileQuery, ProfileQueryVariables>(ProfileDocument, options);
+      }
+export function useProfileLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ProfileQuery, ProfileQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<ProfileQuery, ProfileQueryVariables>(ProfileDocument, options);
+        }
+export type ProfileQueryHookResult = ReturnType<typeof useProfileQuery>;
+export type ProfileLazyQueryHookResult = ReturnType<typeof useProfileLazyQuery>;
+export type ProfileQueryResult = Apollo.QueryResult<ProfileQuery, ProfileQueryVariables>;

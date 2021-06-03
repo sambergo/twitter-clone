@@ -15,14 +15,16 @@ import FlareIcon from "@material-ui/icons/Flare";
 import SearchIcon from "@material-ui/icons/Search";
 import { Field, Form, Formik } from "formik";
 import React from "react";
+import { Route } from "react-router-dom";
 import {
   useCreateTweetMutation,
   useFeedQuery,
-  useMeQuery,
+  User,
 } from "./generated/graphql";
 // import tweets from "./MOCK_DATA.json";
 import { navlinks } from "./navlinks";
 import Tweet from "./Tweet";
+import UserPage from "./UserPage";
 
 const useStyles = makeStyles(() => ({
   tweetinput: {
@@ -43,10 +45,14 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-const Home: React.FC = () => {
+interface HomeProps {
+  me: Pick<User, "fullname" | "username" | "id">;
+}
+
+const Home: React.FC<HomeProps> = ({ me }) => {
   const classes = useStyles();
   const { data } = useFeedQuery();
-  const { data: me } = useMeQuery();
+  // const { data: me } = useMeQuery();
   const [createTweet] = useCreateTweetMutation();
   const navLink = (obj: { icon: JSX.Element; text: string; link: string }) => {
     const { icon, text, link } = obj;
@@ -220,14 +226,21 @@ const Home: React.FC = () => {
         <Grid xs={1} lg={3} item container direction="column">
           {navlinks.map((d) => navLink(d))}
         </Grid>
-        <Box position="absolute" bottom={20} marginLeft={3} display="flex">
+        <Box
+          position="absolute"
+          bottom={0}
+          bgcolor="black"
+          paddingBottom={2}
+          marginLeft={3}
+          display="flex"
+        >
           <Avatar alt="avatar" src="/img/avatar.png" />
           <Box display={{ xs: "none", lg: "block" }} marginLeft={1}>
             <Typography style={{ fontSize: "15px" }}>
-              {me?.me?.fullname}{" "}
+              {me?.fullname}{" "}
             </Typography>
             <Typography style={{ fontSize: "10px" }}>
-              @{me?.me?.username}{" "}
+              @{me?.username}{" "}
             </Typography>
           </Box>
         </Box>
@@ -239,7 +252,11 @@ const Home: React.FC = () => {
     <Container>
       <Grid container direction="row">
         <Left />
-        <Feed />
+        <Route exact path="/" component={Feed} />
+        <Route path="/explore" component={Feed} />
+        <Route path="/user" component={UserPage} />
+        <Route path="/tweet" component={Feed} />
+        {/* <Feed /> */}
         <Right />
       </Grid>
     </Container>

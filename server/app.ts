@@ -1,13 +1,13 @@
 import { ApolloServer } from "apollo-server-express";
-import "reflect-metadata";
 import connectRedis from "connect-redis";
 import cors from "cors";
 import express from "express";
 import session from "express-session";
 import Redis from "ioredis";
+import "reflect-metadata";
 import { buildSchema } from "type-graphql";
 import { createConnection } from "typeorm";
-import { COOKIE_NAME, __prod__ } from "./constants";
+import { COOKIE_NAME } from "./constants";
 import { Like } from "./entities/Like";
 import { Tweet } from "./entities/Tweet";
 import { User } from "./entities/User";

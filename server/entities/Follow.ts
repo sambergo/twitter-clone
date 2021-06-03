@@ -1,27 +1,26 @@
 import { Field, ObjectType } from "type-graphql";
-import {
-  BaseEntity,
-  Column,
-  CreateDateColumn,
-  Entity,
-  PrimaryGeneratedColumn,
-} from "typeorm";
+import { BaseEntity, Entity, ManyToOne, PrimaryColumn } from "typeorm";
+import { User } from "./User";
 
 @ObjectType()
 @Entity()
-export class Tweet extends BaseEntity {
-  @PrimaryGeneratedColumn()
-  id!: number;
+export class Follow extends BaseEntity {
+  @Field()
+  @PrimaryColumn()
+  userId: number;
 
   @Field()
-  @Column()
-  UserId!: number;
+  @PrimaryColumn()
+  followsId: number;
 
-  @Field()
-  @Column()
-  follows!: number;
+  @Field(() => User)
+  @ManyToOne(() => User, (user) => user.follows)
+  follows: User;
 
-  @Field(() => String)
-  @CreateDateColumn()
-  createdAt: Date;
+  // @Field(() => User)
+  // @ManyToOne(() => User, (user) => user.followedBy)
+  // followedBy: User;
+
+  // @ManyToOne(() => Tweet, (user) => user.followedBy)
+  // followedBy: Tweet;
 }

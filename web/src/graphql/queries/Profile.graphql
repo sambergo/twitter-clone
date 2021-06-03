@@ -1,0 +1,16 @@
+query Profile($id: Int!) {
+  profile(id: $id) {
+    id
+    username
+    fullname
+    dateOfBirth
+    createdAt
+    tweets {
+      id
+      tweet
+      likesCount
+      commentsCount
+      createdAt
+    }
+  }
+}

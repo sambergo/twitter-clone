@@ -32,6 +32,10 @@ export class Tweet extends BaseEntity {
   @ManyToOne(() => User, (user) => user.tweets)
   creator!: User;
 
+  // @Field(() => [Follow])
+  // @OneToMany(() => Follow, (follow) => follow.followedBy)
+  // followedBy: Follow[];
+
   @Field(() => [Like])
   @OneToMany(() => Like, (like) => like.tweet)
   likedBy: Like[];

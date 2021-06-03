@@ -4,6 +4,7 @@ import {
   Ctx,
   Field,
   FieldResolver,
+  Int,
   Mutation,
   ObjectType,
   Query,
@@ -38,6 +39,11 @@ export class UserResolver {
   email(@Root() user: User, @Ctx() { req }: MyContext) {
     if (req.session.userId === user.id) return user.email;
     else return "";
+  }
+
+  @Query(() => User, { nullable: true })
+  async profile(@Arg("id", () => Int) id: number): Promise<User | undefined> {
+    return await User.findOne({ where: { id }, relations: ["tweets"] });
   }
 
   @Query(() => User, { nullable: true })

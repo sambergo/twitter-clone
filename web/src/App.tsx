@@ -31,7 +31,9 @@ function App() {
       <ThemeProvider theme={theme}>
         <CssBaseline />
         <Route path="/login" component={Login} />
-        <Route exact path="/" component={data?.me?.id ? Home : Landing} />
+        <Route path="/">
+          {data?.me?.id ? <Home me={data.me} /> : <Landing />}
+        </Route>
         {/* <Route path="/home" component={Home} /> */}
       </ThemeProvider>
     </Router>
