@@ -15,7 +15,11 @@ import FlareIcon from "@material-ui/icons/Flare";
 import SearchIcon from "@material-ui/icons/Search";
 import { Field, Form, Formik } from "formik";
 import React from "react";
-import { useCreateTweetMutation, useFeedQuery } from "./generated/graphql";
+import {
+  useCreateTweetMutation,
+  useFeedQuery,
+  useMeQuery,
+} from "./generated/graphql";
 // import tweets from "./MOCK_DATA.json";
 import { navlinks } from "./navlinks";
 import Tweet from "./Tweet";
@@ -42,6 +46,7 @@ const useStyles = makeStyles(() => ({
 const Home: React.FC = () => {
   const classes = useStyles();
   const { data } = useFeedQuery();
+  const { data: me } = useMeQuery();
   const [createTweet] = useCreateTweetMutation();
   const navLink = (obj: { icon: JSX.Element; text: string; link: string }) => {
     const { icon, text, link } = obj;
@@ -219,10 +224,10 @@ const Home: React.FC = () => {
           <Avatar alt="avatar" src="/img/avatar.png" />
           <Box display={{ xs: "none", lg: "block" }} marginLeft={1}>
             <Typography style={{ fontSize: "15px" }}>
-              {data?.feed.tweets[0].creator.fullname}{" "}
+              {me?.me?.fullname}{" "}
             </Typography>
             <Typography style={{ fontSize: "10px" }}>
-              @{data?.feed.tweets[0].creator.username}{" "}
+              @{me?.me?.username}{" "}
             </Typography>
           </Box>
         </Box>

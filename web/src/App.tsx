@@ -1,5 +1,6 @@
 import { createMuiTheme, CssBaseline, ThemeProvider } from "@material-ui/core";
 import { BrowserRouter as Router, Route } from "react-router-dom";
+import { useMeQuery } from "./generated/graphql";
 import Home from "./Home";
 import Landing from "./Landing";
 import Login from "./Login";
@@ -24,13 +25,14 @@ const theme = createMuiTheme({
 });
 
 function App() {
+  const { data } = useMeQuery();
   return (
     <Router>
       <ThemeProvider theme={theme}>
         <CssBaseline />
-        <Route exact path="/" component={Landing} />
         <Route path="/login" component={Login} />
-        <Route path="/home" component={Home} />
+        <Route exact path="/" component={data?.me?.id ? Home : Landing} />
+        {/* <Route path="/home" component={Home} /> */}
       </ThemeProvider>
     </Router>
   );

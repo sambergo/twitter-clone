@@ -75,7 +75,7 @@ const Login: React.FC = () => {
               });
               if (res.data?.login.errors) {
                 actions.setErrors(toErrorMap(res.data?.login.errors));
-              } else history.push("/home");
+              } else history.push("/");
             }}
           >
             <Form>
