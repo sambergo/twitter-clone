@@ -24,7 +24,7 @@ import {
 // import tweets from "./MOCK_DATA.json";
 import { navlinks } from "./navlinks";
 import Tweet from "./Tweet";
-import UserPage from "./UserPage";
+import Profile from "./Profile";
 
 const useStyles = makeStyles(() => ({
   tweetinput: {
@@ -254,7 +254,7 @@ const Home: React.FC<HomeProps> = ({ me }) => {
         <Left />
         <Route exact path="/" component={Feed} />
         <Route path="/explore" component={Feed} />
-        <Route path="/user" component={UserPage} />
+        <Route path="/user" component={Profile} />
         <Route path="/tweet" component={Feed} />
         {/* <Feed /> */}
         <Right />
