@@ -7,20 +7,17 @@ import { User } from "./User";
 export class Follow extends BaseEntity {
   @Field()
   @PrimaryColumn()
-  userId: number;
+  followerId: number;
 
   @Field()
   @PrimaryColumn()
   followsId: number;
 
-  @Field(() => User)
-  @ManyToOne(() => User, (user) => user.follows)
+  @Field(() => User, { nullable: true })
+  @ManyToOne(() => User, (user) => user.followers, { nullable: true })
+  follower: User;
+
+  @Field(() => User, { nullable: true })
+  @ManyToOne(() => User, (user) => user.following, { nullable: true })
   follows: User;
-
-  // @Field(() => User)
-  // @ManyToOne(() => User, (user) => user.followedBy)
-  // followedBy: User;
-
-  // @ManyToOne(() => Tweet, (user) => user.followedBy)
-  // followedBy: Tweet;
 }

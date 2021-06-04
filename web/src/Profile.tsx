@@ -17,7 +17,7 @@ import MoreHorizOutlinedIcon from "@material-ui/icons/MoreHorizOutlined";
 import React from "react";
 import { useProfileQuery } from "./generated/graphql";
 
-interface UserPageProps {}
+interface ProfileProps {}
 
 const useStyles = makeStyles(() => ({
   card: { width: "100%" },
@@ -36,7 +36,7 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-const UserPage: React.FC<UserPageProps> = ({}) => {
+const Profile: React.FC<ProfileProps> = ({}) => {
   const { data } = useProfileQuery({ variables: { id: 2 } });
   if (!data) return <div>loading...</div>;
   return (
@@ -120,4 +120,4 @@ const UserPage: React.FC<UserPageProps> = ({}) => {
     </Grid>
   );
 };
-export default UserPage;
+export default Profile;
