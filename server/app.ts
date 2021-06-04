@@ -8,6 +8,7 @@ import "reflect-metadata";
 import { buildSchema } from "type-graphql";
 import { createConnection } from "typeorm";
 import { COOKIE_NAME } from "./constants";
+import { Follow } from "./entities/Follow";
 import { Like } from "./entities/Like";
 import { Tweet } from "./entities/Tweet";
 import { User } from "./entities/User";
@@ -26,7 +27,7 @@ const main = async () => {
     password: "postgres",
     logging: true,
     synchronize: true,
-    entities: [User, Tweet, Like],
+    entities: [User, Tweet, Like, Follow],
   });
 
   const app = express();

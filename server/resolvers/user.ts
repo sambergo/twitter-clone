@@ -10,10 +10,13 @@ import {
   Query,
   Resolver,
   Root,
+  UseMiddleware,
 } from "type-graphql";
 import { getConnection } from "typeorm";
 import { COOKIE_NAME } from "../constants";
+import { Follow } from "../entities/Follow";
 import { User } from "../entities/User";
+import { isAuth } from "../middleware/isAuth";
 import { LoginInput, MyContext, RegisterInput } from "../types";
 import { validateRegister } from "../utils/validateRegister";
 
@@ -41,18 +44,64 @@ export class UserResolver {
     else return "";
   }
 
+  @FieldResolver(() => [Follow])
+  async followers(@Root() user: User) {
+    const followers = await Follow.find({
+      where: { followsId: user.id },
+      relations: ["follower"],
+    });
+    return followers;
+  }
+
+  @FieldResolver(() => [Follow])
+  async following(@Root() user: User) {
+    const following = await Follow.find({
+      where: { followerId: user.id },
+      relations: ["follows"],
+    });
+    return following;
+  }
+
   @Query(() => User, { nullable: true })
   async profile(@Arg("id", () => Int) id: number): Promise<User | undefined> {
-    return await User.findOne({ where: { id }, relations: ["tweets"] });
+    return await User.findOne({
+      where: { id },
+      relations: ["tweets", "following", "followers"],
+    });
   }
 
   @Query(() => User, { nullable: true })
   me(@Ctx() { req }: MyContext) {
-    console.log("req : ", req.session);
     if (!req.session.userId) {
       return null;
     }
     return User.findOne(req.session.userId);
+  }
+
+  @Mutation(() => Boolean)
+  @UseMiddleware(isAuth)
+  async unfollow(
+    @Arg("followsId", () => Int) followsId: number,
+    @Ctx() { req }: MyContext
+  ): Promise<Boolean> {
+    await Follow.delete({
+      followsId,
+      followerId: req.session.userId,
+    });
+    return true;
+  }
+
+  @Mutation(() => Boolean)
+  @UseMiddleware(isAuth)
+  async follow(
+    @Arg("followsId", () => Int) followsId: number,
+    @Ctx() { req }: MyContext
+  ): Promise<Boolean> {
+    await Follow.create({
+      followsId,
+      followerId: req.session.userId,
+    }).save();
+    return true;
   }
 
   @Mutation(() => UserResponse)

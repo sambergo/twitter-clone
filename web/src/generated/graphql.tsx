@@ -20,6 +20,14 @@ export type FieldError = {
   message: Scalars['String'];
 };
 
+export type Follow = {
+  __typename?: 'Follow';
+  followerId: Scalars['Float'];
+  followsId: Scalars['Float'];
+  follower?: Maybe<User>;
+  follows?: Maybe<User>;
+};
+
 export type InfiniteTweets = {
   __typename?: 'InfiniteTweets';
   tweets: Array<Tweet>;
@@ -46,6 +54,8 @@ export type Mutation = {
   editTweet: Tweet;
   comment: Tweet;
   createTweet: Tweet;
+  unfollow: Scalars['Boolean'];
+  follow: Scalars['Boolean'];
   register: UserResponse;
   login: UserResponse;
   logout: Scalars['Boolean'];
@@ -81,6 +91,16 @@ export type MutationCommentArgs = {
 
 export type MutationCreateTweetArgs = {
   input: TweetInput;
+};
+
+
+export type MutationUnfollowArgs = {
+  followsId: Scalars['Int'];
+};
+
+
+export type MutationFollowArgs = {
+  followsId: Scalars['Int'];
 };
 
 
@@ -155,6 +175,8 @@ export type User = {
   dateOfBirth: Scalars['String'];
   email: Scalars['String'];
   tweets: Array<Tweet>;
+  following?: Maybe<Array<Follow>>;
+  followers?: Maybe<Array<Follow>>;
   createdAt: Scalars['String'];
   updatedAt: Scalars['String'];
 };
@@ -279,7 +301,19 @@ export type ProfileQuery = (
     & { tweets: Array<(
       { __typename?: 'Tweet' }
       & Pick<Tweet, 'id' | 'tweet' | 'likesCount' | 'commentsCount' | 'createdAt'>
-    )> }
+    )>, following?: Maybe<Array<(
+      { __typename?: 'Follow' }
+      & { follows?: Maybe<(
+        { __typename?: 'User' }
+        & Pick<User, 'id' | 'username' | 'fullname'>
+      )> }
+    )>>, followers?: Maybe<Array<(
+      { __typename?: 'Follow' }
+      & { follower?: Maybe<(
+        { __typename?: 'User' }
+        & Pick<User, 'id' | 'username' | 'fullname'>
+      )> }
+    )>> }
   )> }
 );
 
@@ -564,6 +598,20 @@ export const ProfileDocument = gql`
       likesCount
       commentsCount
       createdAt
+    }
+    following {
+      follows {
+        id
+        username
+        fullname
+      }
+    }
+    followers {
+      follower {
+        id
+        username
+        fullname
+      }
     }
   }
 }

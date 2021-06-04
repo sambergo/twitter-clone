@@ -12,5 +12,19 @@ query Profile($id: Int!) {
       commentsCount
       createdAt
     }
+    following {
+      follows {
+        id
+        username
+        fullname
+      }
+    }
+    followers {
+      follower {
+        id
+        username
+        fullname
+      }
+    }
   }
 }

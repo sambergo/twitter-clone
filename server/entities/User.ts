@@ -8,6 +8,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from "typeorm";
+import { Follow } from "./Follow";
 import { Like } from "./Like";
 import { Tweet } from "./Tweet";
 
@@ -40,6 +41,14 @@ export class User extends BaseEntity {
   @Field(() => [Tweet])
   @OneToMany(() => Tweet, (tweet) => tweet.creator)
   tweets: Tweet[];
+
+  @Field(() => [Follow], { nullable: true })
+  @OneToMany(() => Follow, (follow) => follow.follows, { nullable: true })
+  following: Follow[];
+
+  @Field(() => [Follow], { nullable: true })
+  @OneToMany(() => Follow, (follow) => follow.follower, { nullable: true })
+  followers: Follow[];
 
   // @Field(() => [Follow])
   // @OneToMany(() => Follow, (follow) => follow.followedBy)
