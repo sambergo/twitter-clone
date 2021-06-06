@@ -13,11 +13,11 @@ export class Follow extends BaseEntity {
   @PrimaryColumn()
   followsId: number;
 
-  @Field(() => User, { nullable: true })
+  @Field(() => User)
   @ManyToOne(() => User, (user) => user.followers, { nullable: true })
   follower: User;
 
-  @Field(() => User, { nullable: true })
+  @Field(() => User)
   @ManyToOne(() => User, (user) => user.following, { nullable: true })
   follows: User;
 }

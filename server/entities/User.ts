@@ -42,20 +42,13 @@ export class User extends BaseEntity {
   @OneToMany(() => Tweet, (tweet) => tweet.creator)
   tweets: Tweet[];
 
-  @Field(() => [Follow], { nullable: true })
+  @Field(() => [Follow])
   @OneToMany(() => Follow, (follow) => follow.follows, { nullable: true })
   following: Follow[];
 
-  @Field(() => [Follow], { nullable: true })
+  @Field(() => [Follow])
   @OneToMany(() => Follow, (follow) => follow.follower, { nullable: true })
   followers: Follow[];
-
-  // @Field(() => [Follow])
-  // @OneToMany(() => Follow, (follow) => follow.followedBy)
-  // followedBy: User[];
-
-  // @OneToMany(() => Follow, (follow) => follow.follows)
-  // follows: Follow[];
 
   @OneToMany(() => Like, (like) => like.user)
   likes: Like[];

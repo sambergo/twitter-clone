@@ -178,6 +178,7 @@ const Home: React.FC<HomeProps> = ({ me }) => {
             {data?.feed.tweets.map((tweet) => (
               <Tweet
                 key={tweet.id}
+                //TODO 3 pois
                 retweets={3}
                 {...tweet}
                 avatar={"/img/avatar.png"}

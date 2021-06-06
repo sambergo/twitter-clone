@@ -1,5 +1,3 @@
-import DateRangeOutlinedIcon from "@material-ui/icons/DateRangeOutlined";
-import LocationOnOutlinedIcon from "@material-ui/icons/LocationOnOutlined";
 import {
   Avatar,
   Box,
@@ -13,9 +11,12 @@ import {
   Typography,
 } from "@material-ui/core";
 import AddAlertOutlinedIcon from "@material-ui/icons/AddAlertOutlined";
+import DateRangeOutlinedIcon from "@material-ui/icons/DateRangeOutlined";
+import LocationOnOutlinedIcon from "@material-ui/icons/LocationOnOutlined";
 import MoreHorizOutlinedIcon from "@material-ui/icons/MoreHorizOutlined";
 import React from "react";
 import { useProfileQuery } from "./generated/graphql";
+import Tweet from "./Tweet";
 
 interface ProfileProps {}
 
@@ -37,11 +38,31 @@ const useStyles = makeStyles(() => ({
 }));
 
 const Profile: React.FC<ProfileProps> = ({}) => {
-  const { data } = useProfileQuery({ variables: { id: 2 } });
+  const [nav, setNav] =
+    React.useState<"tweets" | "replies" | "media" | "likes">("tweets");
+  const { data } = useProfileQuery({ variables: { id: 1 } });
+  console.log("data : ", data);
   if (!data) return <div>loading...</div>;
+  const {
+    createdAt,
+    username,
+    fullname,
+    id,
+    tweets,
+    followers,
+    following,
+    dateOfBirth,
+  } = data.profile!;
+
   return (
     <Grid md={8} lg={6} xs={10} item container direction="column">
-      <Card style={{ width: "100%", backgroundColor: "black" }} square>
+      <Card
+        style={{
+          width: "100%",
+          backgroundColor: "black",
+        }}
+        square
+      >
         <CardMedia style={{ height: 170 }} image={"/img/twitter_left.png"}>
           <Avatar
             src={"/img/avatar.png"}
@@ -113,10 +134,42 @@ const Profile: React.FC<ProfileProps> = ({}) => {
                 ).toLocaleString("en-US", { month: "long", year: "numeric" })}
               </Typography>
             </Box>
-            <Box display="flex">{/* {data.profile.} */}</Box>
+            <Box marginTop={1} display="flex">
+              <Typography>{following!.length ?? null}</Typography>
+              <Typography style={{ marginLeft: 5, color: "gray" }}>
+                Following
+              </Typography>
+              <Typography style={{ marginLeft: 25 }}>
+                {followers!.length ?? null}
+              </Typography>
+              <Typography style={{ marginLeft: 5, color: "gray" }}>
+                Followers
+              </Typography>
+            </Box>
+            <Box
+              paddingX={3}
+              paddingY={2}
+              display="flex"
+              justifyContent="space-between"
+            >
+              <Box>Tweets</Box>
+              <Box>Tweets & replies</Box>
+              <Box>Media</Box>
+              <Box>Likes</Box>
+            </Box>
           </Box>
         </CardContent>
       </Card>
+
+      {tweets.map((tweet) => (
+        <Tweet
+          {...tweet}
+          avatar={"/srx/avatar.png"}
+          retweets={3}
+          fullname={fullname}
+          username={username}
+        />
+      ))}
     </Grid>
   );
 };

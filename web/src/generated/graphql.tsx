@@ -24,8 +24,8 @@ export type Follow = {
   __typename?: 'Follow';
   followerId: Scalars['Float'];
   followsId: Scalars['Float'];
-  follower?: Maybe<User>;
-  follows?: Maybe<User>;
+  follower: User;
+  follows: User;
 };
 
 export type InfiniteTweets = {
@@ -175,8 +175,8 @@ export type User = {
   dateOfBirth: Scalars['String'];
   email: Scalars['String'];
   tweets: Array<Tweet>;
-  following?: Maybe<Array<Follow>>;
-  followers?: Maybe<Array<Follow>>;
+  following: Array<Follow>;
+  followers: Array<Follow>;
   createdAt: Scalars['String'];
   updatedAt: Scalars['String'];
 };
@@ -300,20 +300,20 @@ export type ProfileQuery = (
     & Pick<User, 'id' | 'username' | 'fullname' | 'dateOfBirth' | 'createdAt'>
     & { tweets: Array<(
       { __typename?: 'Tweet' }
-      & Pick<Tweet, 'id' | 'tweet' | 'likesCount' | 'commentsCount' | 'createdAt'>
-    )>, following?: Maybe<Array<(
+      & Pick<Tweet, 'id' | 'tweet' | 'likesCount' | 'commentsCount' | 'createdAt' | 'likedByUser'>
+    )>, following: Array<(
       { __typename?: 'Follow' }
-      & { follows?: Maybe<(
+      & { follows: (
         { __typename?: 'User' }
         & Pick<User, 'id' | 'username' | 'fullname'>
-      )> }
-    )>>, followers?: Maybe<Array<(
+      ) }
+    )>, followers: Array<(
       { __typename?: 'Follow' }
-      & { follower?: Maybe<(
+      & { follower: (
         { __typename?: 'User' }
         & Pick<User, 'id' | 'username' | 'fullname'>
-      )> }
-    )>> }
+      ) }
+    )> }
   )> }
 );
 
@@ -598,6 +598,7 @@ export const ProfileDocument = gql`
       likesCount
       commentsCount
       createdAt
+      likedByUser
     }
     following {
       follows {

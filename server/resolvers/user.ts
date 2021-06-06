@@ -1,4 +1,5 @@
 import argon2 from "argon2";
+import { Tweet } from "../entities/Tweet";
 import {
   Arg,
   Ctx,
@@ -50,7 +51,7 @@ export class UserResolver {
       where: { followsId: user.id },
       relations: ["follower"],
     });
-    return followers;
+    return followers || [];
   }
 
   @FieldResolver(() => [Follow])
@@ -59,7 +60,15 @@ export class UserResolver {
       where: { followerId: user.id },
       relations: ["follows"],
     });
-    return following;
+    return following || [];
+  }
+
+  @FieldResolver(() => [Tweet])
+  async tweets(@Root() user: User) {
+    return await Tweet.find({
+      where: { creatorId: user.id },
+      order: { createdAt: "DESC" },
+    });
   }
 
   @Query(() => User, { nullable: true })

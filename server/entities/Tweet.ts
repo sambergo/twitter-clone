@@ -55,9 +55,11 @@ export class Tweet extends BaseEntity {
   // TODO: fiskumpi tapa?
   @Field(() => Boolean)
   likedByUser(@Root() parent: Tweet, @Ctx() { req }: MyContext): boolean {
-    return parent.likedBy
-      .map((l) => l.userId)
-      .includes(req.session.userId ?? -1);
+    return (
+      parent?.likedBy
+        ?.map((l) => l.userId)
+        .includes(req.session.userId ?? -1) || false
+    );
   }
 
   @Field(() => Int)
